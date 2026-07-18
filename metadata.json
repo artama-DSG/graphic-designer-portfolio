@@ -1,0 +1,8 @@
+{
+  "name": "Graphic Designer Portfolio",
+  "description": "A portfolio website for a graphic designer showcasing logos, flyers, and print products with a special feature to view brand guidelines for logo designs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
