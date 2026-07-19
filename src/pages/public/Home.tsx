@@ -1,19 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Briefcase, MessageCircle, ArrowRight, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
+import { db } from '../../services/firebase';
 import { cn } from '../../utils/cn';
 
 const CATEGORIES = ['Semua', 'Logo', 'Identitas Brand', 'Media Promosi', 'Desain Cetak', 'Media Outdoor'];
-
-const PORTFOLIO_DATA = [
-  { id: '1', title: 'Rebranding Kopi Kenangan', category: 'Identitas Brand', slug: 'kopi-kenangan', image: 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop' },
-  { id: '2', title: 'Logo UMKM Kuliner', category: 'Logo', slug: 'umkm-kuliner', image: 'https://images.unsplash.com/photo-1626292376665-27a3a60a7e1e?q=80&w=800&auto=format&fit=crop' },
-  { id: '3', title: 'Brosur Event Sekolah', category: 'Desain Cetak', slug: 'brosur-event', image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=800&auto=format&fit=crop' },
-  { id: '4', title: 'Banner Yayasan Sosial', category: 'Media Outdoor', slug: 'banner-yayasan', image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=800&auto=format&fit=crop' },
-  { id: '5', title: 'Social Media Kit Klinik', category: 'Media Promosi', slug: 'medkit-klinik', image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop' },
-  { id: '6', title: 'Packaging Kopi Lokal', category: 'Identitas Brand', slug: 'packaging-kopi', image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop' },
-];
 
 const CLIENT_LOGOS = [
   'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=200&h=100&fit=crop',
@@ -24,10 +17,58 @@ const CLIENT_LOGOS = [
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState('Semua');
+  const [portfolios, setPortfolios] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [settings, setSettings] = useState<any>({
+    heroTitle: 'Desain Grafis Profesional untuk Branding & Media Cetak',
+    heroDescription: 'Saya membantu bisnis, UMKM, dan berbagai instansi menciptakan logo, media promosi, serta desain cetak berkualitas yang menarik, fungsional, dan siap diproduksi.',
+    ctaTitle: 'Siap Mewujudkan Desain Anda?',
+    ctaDescription: 'Diskusikan kebutuhan desain Anda sekarang juga. Mari ciptakan sesuatu yang luar biasa bersama.',
+    whatsappNumber: '6289630144066'
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!db) return;
+        
+        // Fetch Settings
+        const settingsDoc = await getDoc(doc(db, 'settings', 'general'));
+        if (settingsDoc.exists()) {
+          setSettings((prev: any) => ({ ...prev, ...settingsDoc.data() }));
+        }
+
+        // Fetch Portfolios
+        const q = query(
+          collection(db, 'portfolios'), 
+          where('status', '==', 'published')
+        );
+        const querySnapshot = await getDocs(q);
+        const data = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        // Sort manually by createdAt since we can't use orderBy together with where without index
+        data.sort((a: any, b: any) => {
+          if (!a.createdAt || !b.createdAt) return 0;
+          return b.createdAt.seconds - a.createdAt.seconds;
+        });
+
+        setPortfolios(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const filteredPortfolio = activeCategory === 'Semua' 
-    ? PORTFOLIO_DATA 
-    : PORTFOLIO_DATA.filter(item => item.category === activeCategory);
+    ? portfolios 
+    : portfolios.filter(item => item.categoryId === activeCategory);
 
   return (
     <div className="bg-zinc-50 min-h-screen font-sans text-zinc-900 selection:bg-purple-200 selection:text-purple-900">
@@ -57,10 +98,10 @@ export default function Home() {
           className="max-w-4xl"
         >
           <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold tracking-tight leading-[1.1] mb-6">
-            Desain Grafis Profesional untuk Branding & Media Cetak
+            {settings.heroTitle}
           </h1>
-          <p className="text-xl md:text-2xl text-zinc-600 leading-relaxed max-w-3xl mb-10">
-            Saya membantu bisnis, UMKM, dan berbagai instansi menciptakan logo, media promosi, serta desain cetak berkualitas yang menarik, fungsional, dan siap diproduksi.
+          <p className="text-xl md:text-2xl text-zinc-600 leading-relaxed max-w-3xl mb-10 whitespace-pre-wrap">
+            {settings.heroDescription}
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <a 
@@ -71,7 +112,7 @@ export default function Home() {
               <ArrowRight size={20} />
             </a>
             <a 
-              href="https://wa.me/6289630144066" 
+              href={`https://wa.me/${settings.whatsappNumber}`} 
               target="_blank" rel="noopener noreferrer"
               className="px-8 py-4 bg-white border-2 border-zinc-200 text-zinc-900 rounded-full font-medium text-lg hover:border-yellow-400 hover:text-yellow-600 hover:bg-yellow-50 transition-all flex items-center justify-center gap-2"
             >
@@ -113,38 +154,48 @@ export default function Home() {
             </div>
           </div>
 
-          <motion.div layout className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-            <AnimatePresence>
-              {filteredPortfolio.map((item) => (
-                <motion.div
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3 }}
-                  key={item.id}
-                >
-                  <Link to={`/portfolio/${item.slug}`} className="group block h-full">
-                    <div className="rounded-2xl sm:rounded-3xl overflow-hidden aspect-square sm:aspect-[4/5] bg-zinc-100 relative border border-zinc-200 group-hover:border-purple-400 transition-colors duration-500 shadow-sm group-hover:shadow-xl group-hover:shadow-purple-500/10 h-full">
-                      <img 
-                        src={item.image} 
-                        alt={item.title} 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300"></div>
-                      
-                      <div className="absolute bottom-0 left-0 w-full p-4 sm:p-6 translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                        <span className="inline-block px-2 py-0.5 sm:px-3 sm:py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] sm:text-xs font-bold tracking-wider text-yellow-300 uppercase mb-2 sm:mb-3 border border-white/20">
-                          {item.category}
-                        </span>
-                        <h3 className="text-base sm:text-xl lg:text-2xl font-black tracking-tighter text-white font-display group-hover:text-yellow-400 transition-colors leading-tight sm:leading-none">{item.title}</h3>
+          {isLoading ? (
+            <div className="py-20 text-center text-zinc-500 font-medium">Memuat portfolio...</div>
+          ) : filteredPortfolio.length === 0 ? (
+            <div className="py-20 text-center text-zinc-500 font-medium">Belum ada karya portfolio.</div>
+          ) : (
+            <motion.div layout className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+              <AnimatePresence>
+                {filteredPortfolio.map((item) => (
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                    key={item.id}
+                  >
+                    <Link to={`/portfolio/${item.slug}`} className="group block h-full">
+                      <div className="rounded-2xl sm:rounded-3xl overflow-hidden aspect-square sm:aspect-[4/5] bg-zinc-100 relative border border-zinc-200 group-hover:border-purple-400 transition-colors duration-500 shadow-sm group-hover:shadow-xl group-hover:shadow-purple-500/10 h-full">
+                        {item.image ? (
+                          <img 
+                            src={item.image} 
+                            alt={item.title} 
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-zinc-400 bg-zinc-200">No Image</div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300"></div>
+                        
+                        <div className="absolute bottom-0 left-0 w-full p-4 sm:p-6 translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                          <span className="inline-block px-2 py-0.5 sm:px-3 sm:py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] sm:text-xs font-bold tracking-wider text-yellow-300 uppercase mb-2 sm:mb-3 border border-white/20">
+                            {item.categoryId}
+                          </span>
+                          <h3 className="text-base sm:text-xl lg:text-2xl font-black tracking-tighter text-white font-display group-hover:text-yellow-400 transition-colors leading-tight sm:leading-none">{item.title}</h3>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
         </div>
       </section>
 
@@ -173,14 +224,14 @@ export default function Home() {
         <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-yellow-400/10 rounded-full blur-[80px] pointer-events-none"></div>
         
         <div className="max-w-4xl mx-auto relative z-10">
-          <h2 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tighter mb-6 sm:mb-8 font-display uppercase leading-[1]">
-            Siap Mewujudkan <br/> <span className="text-purple-400">Desain Anda?</span>
+          <h2 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tighter mb-6 sm:mb-8 font-display uppercase leading-[1] whitespace-pre-wrap">
+            {settings.ctaTitle}
           </h2>
-          <p className="text-lg sm:text-xl text-zinc-400 mb-10 sm:mb-12 max-w-2xl mx-auto font-medium">
-            Diskusikan kebutuhan desain Anda sekarang juga. Mari ciptakan sesuatu yang luar biasa bersama.
+          <p className="text-lg sm:text-xl text-zinc-400 mb-10 sm:mb-12 max-w-2xl mx-auto font-medium whitespace-pre-wrap">
+            {settings.ctaDescription}
           </p>
           <a 
-            href="https://wa.me/6289630144066" 
+            href={`https://wa.me/${settings.whatsappNumber}`} 
             target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 bg-yellow-400 text-zinc-950 rounded-full font-black uppercase tracking-widest text-sm sm:text-base hover:scale-105 hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(250,204,21,0.2)]"
           >

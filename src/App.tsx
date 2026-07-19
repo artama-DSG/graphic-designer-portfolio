@@ -12,6 +12,7 @@ import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
 import PortfolioList from './pages/admin/PortfolioList';
 import PortfolioForm from './pages/admin/PortfolioForm';
+import AdminSettings from './pages/admin/Settings';
 import AdminLayout from './components/admin/AdminLayout';
 
 const queryClient = new QueryClient();
@@ -55,6 +56,7 @@ function App() {
             <Route path="portfolio" element={<PortfolioList />} />
             <Route path="portfolio/new" element={<PortfolioForm />} />
             <Route path="portfolio/edit/:id" element={<PortfolioForm />} />
+            <Route path="settings" element={<AdminSettings />} />
           </Route>
 
           {/* Fallback */}
