@@ -1,29 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, UploadCloud, X, Loader2 } from 'lucide-react';
+import { ArrowLeft, Save, Link as LinkIcon, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../../services/firebase';
+import { db } from '../../services/firebase';
 
 export default function PortfolioForm() {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
   const onSubmit = async (data: any) => {
-    if (!db || !storage) {
+    if (!db) {
       setErrorMsg("Firebase belum dikonfigurasi.");
       return;
     }
@@ -32,19 +21,6 @@ export default function PortfolioForm() {
     setErrorMsg('');
     
     try {
-      let imageUrl = '';
-      
-      // Upload image to Firebase Storage if exists
-      if (imageFile) {
-        const imageRef = ref(storage, `portfolio/${Date.now()}_${imageFile.name}`);
-        const snapshot = await uploadBytes(imageRef, imageFile);
-        imageUrl = await getDownloadURL(snapshot.ref);
-      } else {
-        setErrorMsg('Thumbnail project wajib diupload');
-        setIsSubmitting(false);
-        return;
-      }
-
       // Generate slug from title
       const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
@@ -57,7 +33,7 @@ export default function PortfolioForm() {
         client: data.client,
         isFeatured: data.isFeatured,
         slug: slug,
-        image: imageUrl,
+        image: data.image,
         createdAt: serverTimestamp(),
       });
 
@@ -120,42 +96,23 @@ export default function PortfolioForm() {
             </div>
 
             <div className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm space-y-6">
-              <h3 className="text-lg font-semibold text-zinc-900">Thumbnail & Gallery</h3>
+              <h3 className="text-lg font-semibold text-zinc-900">Gambar Project (Cloudinary URL)</h3>
               
               <div>
-                <label className="block text-sm font-semibold text-zinc-900 mb-2">Thumbnail Project <span className="text-red-500">*</span></label>
-                
-                {imagePreview ? (
-                  <div className="relative rounded-xl overflow-hidden border border-zinc-200 group">
-                    <img src={imagePreview} alt="Preview" className="w-full h-auto object-cover max-h-[400px]" />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setImageFile(null);
-                          setImagePreview(null);
-                        }}
-                        className="bg-white text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors"
-                      >
-                        <X size={20} />
-                      </button>
-                    </div>
+                <label className="block text-sm font-semibold text-zinc-900 mb-2">URL Gambar <span className="text-red-500">*</span></label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <LinkIcon size={18} className="text-zinc-400" />
                   </div>
-                ) : (
-                  <label className="border-2 border-dashed border-zinc-300 rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-zinc-50 transition-colors block">
-                    <div className="w-12 h-12 bg-zinc-100 text-zinc-500 rounded-full flex items-center justify-center mb-3">
-                      <UploadCloud size={24} />
-                    </div>
-                    <p className="text-sm font-medium text-zinc-900">Klik untuk upload gambar</p>
-                    <p className="text-xs text-zinc-500 mt-1">SVG, PNG, JPG or GIF (max. 5MB)</p>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={handleImageChange}
-                    />
-                  </label>
-                )}
+                  <input 
+                    {...register('image', { required: true })}
+                    type="url"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
+                    placeholder="https://res.cloudinary.com/..."
+                  />
+                </div>
+                {errors.image && <span className="text-red-500 text-xs mt-1">URL gambar wajib diisi</span>}
+                <p className="text-xs text-zinc-500 mt-2">Paste URL gambar yang sudah diupload ke Cloudinary.</p>
               </div>
             </div>
           </div>

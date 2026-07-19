@@ -12,6 +12,7 @@ import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
 import PortfolioList from './pages/admin/PortfolioList';
 import PortfolioForm from './pages/admin/PortfolioForm';
+import ClientList from './pages/admin/ClientList';
 import AdminSettings from './pages/admin/Settings';
 import AdminLayout from './components/admin/AdminLayout';
 
@@ -56,6 +57,7 @@ function App() {
             <Route path="portfolio" element={<PortfolioList />} />
             <Route path="portfolio/new" element={<PortfolioForm />} />
             <Route path="portfolio/edit/:id" element={<PortfolioForm />} />
+            <Route path="clients" element={<ClientList />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
 

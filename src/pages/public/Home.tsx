@@ -19,6 +19,7 @@ const CLIENT_LOGOS = [
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState('Semua');
   const [portfolios, setPortfolios] = useState<any[]>([]);
+  const [clients, setClients] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [settings, setSettings] = useState<any>({
     heroTitle: 'Desain Grafis Profesional untuk Branding & Media Cetak',
@@ -57,6 +58,16 @@ export default function Home() {
         });
 
         setPortfolios(data);
+
+        // Fetch Clients
+        const clientsQuery = query(collection(db, 'clients'));
+        const clientsSnapshot = await getDocs(clientsQuery);
+        const clientsData = clientsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setClients(clientsData);
+
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -210,9 +221,9 @@ export default function Home() {
         <div className="flex w-[200%] whitespace-nowrap animate-[marquee_20s_linear_infinite]">
           {[...Array(3)].map((_, arrayIndex) => (
             <div key={arrayIndex} className="flex items-center justify-around w-full gap-16 px-8">
-              {CLIENT_LOGOS.map((logo, index) => (
+              {(clients.length > 0 ? clients : CLIENT_LOGOS).map((logo, index) => (
                 <div key={index} className="w-40 h-20 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer flex items-center justify-center">
-                  <img src={logo} alt="Client Logo" className="max-w-full max-h-full object-contain" />
+                  <img src={typeof logo === 'string' ? logo : logo.logo} alt="Client Logo" className="max-w-full max-h-full object-contain" />
                 </div>
               ))}
             </div>

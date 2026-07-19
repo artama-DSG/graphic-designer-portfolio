@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../services/firebase';
-import { LayoutDashboard, Image, FolderOpen, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, FolderOpen, Settings, LogOut } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 export default function AdminLayout() {
@@ -16,7 +16,7 @@ export default function AdminLayout() {
   const navItems = [
     { name: 'Dashboard', path: '/dashboard-portfolio', icon: LayoutDashboard },
     { name: 'Portfolio', path: '/dashboard-portfolio/portfolio', icon: FolderOpen },
-    { name: 'Media', path: '/dashboard-portfolio/media', icon: Image },
+    { name: 'Klien', path: '/dashboard-portfolio/clients', icon: Users },
     { name: 'Settings', path: '/dashboard-portfolio/settings', icon: Settings },
   ];
 
