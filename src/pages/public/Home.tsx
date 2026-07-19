@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { cn } from '../../utils/cn';
+import { TEMPLATE_PORTFOLIOS } from '../../data/templates';
 
 const CATEGORIES = ['Semua', 'Logo', 'Identitas Brand', 'Media Promosi', 'Desain Cetak', 'Media Outdoor'];
 
@@ -66,9 +67,10 @@ export default function Home() {
     fetchData();
   }, []);
 
+  const activePortfolios = portfolios.length > 0 ? portfolios : TEMPLATE_PORTFOLIOS;
   const filteredPortfolio = activeCategory === 'Semua' 
-    ? portfolios 
-    : portfolios.filter(item => item.categoryId === activeCategory);
+    ? activePortfolios 
+    : activePortfolios.filter(item => item.categoryId === activeCategory);
 
   return (
     <div className="bg-zinc-50 min-h-screen font-sans text-zinc-900 selection:bg-purple-200 selection:text-purple-900">

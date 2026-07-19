@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, MessageCircle } from 'lucide-react';
 import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
+import { TEMPLATE_PORTFOLIOS } from '../../data/templates';
 
 export default function PortfolioDetail() {
   const { slug } = useParams();
@@ -30,6 +31,11 @@ export default function PortfolioDetail() {
         if (!querySnapshot.empty) {
           const docSnap = querySnapshot.docs[0];
           setProject({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          const template = TEMPLATE_PORTFOLIOS.find(p => p.slug === slug);
+          if (template) {
+            setProject(template);
+          }
         }
       } catch (error) {
         console.error("Error fetching portfolio:", error);
