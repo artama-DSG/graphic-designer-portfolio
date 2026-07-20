@@ -15,7 +15,7 @@ export default function Settings() {
     const fetchSettings = async () => {
       try {
         if (!db) return;
-        const docRef = doc(db, 'settings', 'general');
+        const docRef = doc(db, 'settings', 'homepage');
         const docSnap = await getDoc(docRef);
         
         if (docSnap.exists()) {
@@ -38,13 +38,17 @@ export default function Settings() {
     try {
       if (!db) throw new Error("Firebase belum dikonfigurasi.");
       
-      await setDoc(doc(db, 'settings', 'general'), {
+      await setDoc(doc(db, 'settings', 'homepage'), {
         heroTitle: data.heroTitle,
         heroDescription: data.heroDescription,
+        portfolioTitle: data.portfolioTitle,
+        portfolioDescription: data.portfolioDescription,
         ctaTitle: data.ctaTitle,
         ctaDescription: data.ctaDescription,
-        whatsappNumber: data.whatsappNumber
-      });
+        ctaButtonText: data.ctaButtonText,
+        whatsappNumber: data.whatsappNumber,
+        footerText: data.footerText
+      }, { merge: true });
       
       setMessage({ text: 'Pengaturan berhasil disimpan!', type: 'success' });
     } catch (error: any) {
@@ -101,6 +105,30 @@ export default function Settings() {
         </div>
 
         <div className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm space-y-6">
+          <h2 className="text-xl font-bold text-zinc-900 mb-4">Portfolio Section</h2>
+          
+          <div>
+            <label className="block text-sm font-semibold text-zinc-900 mb-2">Judul Portfolio</label>
+            <textarea 
+              {...register('portfolioTitle')}
+              className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
+              placeholder="KARYA PILIHAN ."
+              rows={1}
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-semibold text-zinc-900 mb-2">Deskripsi Portfolio</label>
+            <textarea 
+              {...register('portfolioDescription')}
+              className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
+              placeholder="Jelajahi beberapa project desain grafis terbaik..."
+              rows={2}
+            />
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm space-y-6">
           <h2 className="text-xl font-bold text-zinc-900 mb-4">Call to Action (CTA) Section</h2>
           
           <div>
@@ -120,6 +148,30 @@ export default function Settings() {
               className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
               placeholder="Diskusikan kebutuhan desain Anda sekarang juga..."
               rows={3}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-zinc-900 mb-2">Teks Tombol CTA</label>
+            <input 
+              {...register('ctaButtonText')}
+              type="text"
+              className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
+              placeholder="Hubungi via WhatsApp"
+            />
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm space-y-6">
+          <h2 className="text-xl font-bold text-zinc-900 mb-4">Footer</h2>
+          
+          <div>
+            <label className="block text-sm font-semibold text-zinc-900 mb-2">Teks Footer</label>
+            <textarea 
+              {...register('footerText')}
+              className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
+              placeholder="© 2026 Artama DSG. All rights reserved."
+              rows={2}
             />
           </div>
         </div>

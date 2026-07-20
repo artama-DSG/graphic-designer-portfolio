@@ -24,8 +24,12 @@ export default function Home() {
   const [settings, setSettings] = useState<any>({
     heroTitle: 'Desain Grafis Profesional untuk Branding & Media Cetak',
     heroDescription: 'Saya membantu bisnis, UMKM, dan berbagai instansi menciptakan logo, media promosi, serta desain cetak berkualitas yang menarik, fungsional, dan siap diproduksi.',
+    portfolioTitle: 'KARYA PILIHAN .',
+    portfolioDescription: 'Jelajahi beberapa project desain grafis terbaik yang pernah saya kerjakan untuk berbagai klien.',
     ctaTitle: 'Siap Mewujudkan Desain Anda?',
     ctaDescription: 'Diskusikan kebutuhan desain Anda sekarang juga. Mari ciptakan sesuatu yang luar biasa bersama.',
+    ctaButtonText: 'Hubungi via WhatsApp',
+    footerText: `© ${new Date().getFullYear()} Artama DSG. All rights reserved.`,
     whatsappNumber: '6289630144066'
   });
 
@@ -35,7 +39,7 @@ export default function Home() {
         if (!db) return;
         
         // Fetch Settings
-        const settingsDoc = await getDoc(doc(db, 'settings', 'general'));
+        const settingsDoc = await getDoc(doc(db, 'settings', 'homepage'));
         if (settingsDoc.exists()) {
           setSettings((prev: any) => ({ ...prev, ...settingsDoc.data() }));
         }
@@ -142,10 +146,10 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
             <div>
               <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-4 font-display uppercase">
-                Karya Pilihan <span className="text-yellow-400">.</span>
+                {settings.portfolioTitle}
               </h2>
-              <p className="text-lg text-zinc-500 max-w-xl font-medium">
-                Jelajahi beberapa project desain grafis terbaik yang pernah saya kerjakan untuk berbagai klien.
+              <p className="text-lg text-zinc-500 max-w-xl font-medium whitespace-pre-wrap">
+                {settings.portfolioDescription}
               </p>
             </div>
             
@@ -249,7 +253,7 @@ export default function Home() {
             className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 bg-yellow-400 text-zinc-950 rounded-full font-black uppercase tracking-widest text-sm sm:text-base hover:scale-105 hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(250,204,21,0.2)]"
           >
             <MessageCircle size={22} className="text-zinc-950" />
-            Hubungi via WhatsApp
+            {settings.ctaButtonText}
           </a>
         </div>
       </section>
@@ -266,8 +270,8 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-zinc-100 text-center text-xs sm:text-sm font-medium text-zinc-400">
-          &copy; {new Date().getFullYear()} Artama DSG. All rights reserved.
+        <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-zinc-100 text-center text-xs sm:text-sm font-medium text-zinc-400 whitespace-pre-wrap">
+          {settings.footerText}
         </div>
       </footer>
     </div>
