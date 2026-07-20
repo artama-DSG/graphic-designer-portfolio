@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../services/firebase';
-import { useAuthStore } from '../../store';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -10,7 +9,6 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = useAuthStore();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,11 +31,6 @@ export default function AdminLogin() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleDemoLogin = () => {
-    setUser({ uid: 'demo-user', email: 'demo@example.com' } as any);
-    navigate('/dashboard-portfolio');
   };
 
   return (
@@ -83,23 +76,6 @@ export default function AdminLogin() {
             {loading ? 'Masuk...' : 'Masuk'}
           </button>
         </form>
-
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-zinc-200"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-zinc-500">ATAU</span>
-          </div>
-        </div>
-
-        <button
-          onClick={handleDemoLogin}
-          type="button"
-          className="w-full py-3 bg-purple-100 text-purple-700 rounded-lg font-bold hover:bg-purple-200 transition-colors"
-        >
-          Preview Mode Admin (Demo)
-        </button>
       </div>
     </div>
   );
