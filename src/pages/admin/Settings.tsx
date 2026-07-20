@@ -2,14 +2,26 @@ import { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { Save, Loader2 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+const quillModules = {
+  toolbar: [
+    [{ 'font': [] }],
+    [{ 'color': [] }, { 'background': [] }],
+    ['bold', 'italic', 'underline'],
+    [{ 'align': [] }],
+    ['clean']
+  ]
+};
 
 export default function Settings() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, control } = useForm();
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -84,23 +96,39 @@ export default function Settings() {
           
           <div>
             <label className="block text-sm font-semibold text-zinc-900 mb-2">Judul Hero</label>
-            <textarea 
-              {...register('heroTitle')}
-              className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
-              placeholder="Desain Grafis Profesional untuk Branding & Media Cetak"
-              rows={2}
-            />
+            <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+              <Controller
+                name="heroTitle"
+                control={control}
+                render={({ field }) => (
+                  <ReactQuill 
+                    theme="snow"
+                    modules={quillModules}
+                    value={field.value || ''} 
+                    onChange={field.onChange} 
+                  />
+                )}
+              />
+            </div>
             <p className="text-xs text-zinc-500 mt-1">Gunakan teks singkat dan menarik.</p>
           </div>
           
           <div>
             <label className="block text-sm font-semibold text-zinc-900 mb-2">Deskripsi Hero</label>
-            <textarea 
-              {...register('heroDescription')}
-              className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
-              placeholder="Saya membantu bisnis, UMKM..."
-              rows={3}
-            />
+            <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+              <Controller
+                name="heroDescription"
+                control={control}
+                render={({ field }) => (
+                  <ReactQuill 
+                    theme="snow"
+                    modules={quillModules}
+                    value={field.value || ''} 
+                    onChange={field.onChange} 
+                  />
+                )}
+              />
+            </div>
           </div>
         </div>
 
@@ -109,22 +137,38 @@ export default function Settings() {
           
           <div>
             <label className="block text-sm font-semibold text-zinc-900 mb-2">Judul Portfolio</label>
-            <textarea 
-              {...register('portfolioTitle')}
-              className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
-              placeholder="KARYA PILIHAN ."
-              rows={1}
-            />
+            <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+              <Controller
+                name="portfolioTitle"
+                control={control}
+                render={({ field }) => (
+                  <ReactQuill 
+                    theme="snow"
+                    modules={quillModules}
+                    value={field.value || ''} 
+                    onChange={field.onChange} 
+                  />
+                )}
+              />
+            </div>
           </div>
           
           <div>
             <label className="block text-sm font-semibold text-zinc-900 mb-2">Deskripsi Portfolio</label>
-            <textarea 
-              {...register('portfolioDescription')}
-              className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
-              placeholder="Jelajahi beberapa project desain grafis terbaik..."
-              rows={2}
-            />
+            <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+              <Controller
+                name="portfolioDescription"
+                control={control}
+                render={({ field }) => (
+                  <ReactQuill 
+                    theme="snow"
+                    modules={quillModules}
+                    value={field.value || ''} 
+                    onChange={field.onChange} 
+                  />
+                )}
+              />
+            </div>
           </div>
         </div>
 
@@ -133,22 +177,38 @@ export default function Settings() {
           
           <div>
             <label className="block text-sm font-semibold text-zinc-900 mb-2">Judul CTA</label>
-            <textarea 
-              {...register('ctaTitle')}
-              className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
-              placeholder="Siap Mewujudkan Desain Anda?"
-              rows={2}
-            />
+            <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+              <Controller
+                name="ctaTitle"
+                control={control}
+                render={({ field }) => (
+                  <ReactQuill 
+                    theme="snow"
+                    modules={quillModules}
+                    value={field.value || ''} 
+                    onChange={field.onChange} 
+                  />
+                )}
+              />
+            </div>
           </div>
           
           <div>
             <label className="block text-sm font-semibold text-zinc-900 mb-2">Deskripsi CTA</label>
-            <textarea 
-              {...register('ctaDescription')}
-              className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
-              placeholder="Diskusikan kebutuhan desain Anda sekarang juga..."
-              rows={3}
-            />
+            <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+              <Controller
+                name="ctaDescription"
+                control={control}
+                render={({ field }) => (
+                  <ReactQuill 
+                    theme="snow"
+                    modules={quillModules}
+                    value={field.value || ''} 
+                    onChange={field.onChange} 
+                  />
+                )}
+              />
+            </div>
           </div>
 
           <div>
@@ -167,12 +227,20 @@ export default function Settings() {
           
           <div>
             <label className="block text-sm font-semibold text-zinc-900 mb-2">Teks Footer</label>
-            <textarea 
-              {...register('footerText')}
-              className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all"
-              placeholder="© 2026 Artama DSG. All rights reserved."
-              rows={2}
-            />
+            <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+              <Controller
+                name="footerText"
+                control={control}
+                render={({ field }) => (
+                  <ReactQuill 
+                    theme="snow"
+                    modules={quillModules}
+                    value={field.value || ''} 
+                    onChange={field.onChange} 
+                  />
+                )}
+              />
+            </div>
           </div>
         </div>
 

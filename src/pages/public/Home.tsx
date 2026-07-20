@@ -114,12 +114,14 @@ export default function Home() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-4xl"
         >
-          <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold tracking-tight leading-[1.1] mb-6">
-            {settings.heroTitle}
-          </h1>
-          <p className="text-xl md:text-2xl text-zinc-600 leading-relaxed max-w-3xl mb-10 whitespace-pre-wrap">
-            {settings.heroDescription}
-          </p>
+          <h1 
+            className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold tracking-tight leading-[1.1] mb-6 [&_p]:mb-0"
+            dangerouslySetInnerHTML={{ __html: settings.heroTitle }}
+          />
+          <div 
+            className="text-xl md:text-2xl text-zinc-600 leading-relaxed max-w-3xl mb-10 whitespace-pre-wrap [&_p]:mb-0"
+            dangerouslySetInnerHTML={{ __html: settings.heroDescription }}
+          />
           <div className="flex flex-col sm:flex-row gap-4">
             <a 
               href="#portfolio" 
@@ -145,12 +147,14 @@ export default function Home() {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
             <div>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-4 font-display uppercase">
-                {settings.portfolioTitle}
-              </h2>
-              <p className="text-lg text-zinc-500 max-w-xl font-medium whitespace-pre-wrap">
-                {settings.portfolioDescription}
-              </p>
+              <h2 
+                className="text-4xl md:text-5xl font-black tracking-tighter mb-4 font-display uppercase [&_p]:mb-0"
+                dangerouslySetInnerHTML={{ __html: settings.portfolioTitle }}
+              />
+              <div 
+                className="text-lg text-zinc-500 max-w-xl font-medium whitespace-pre-wrap [&_p]:mb-0"
+                dangerouslySetInnerHTML={{ __html: settings.portfolioDescription }}
+              />
             </div>
             
             <div className="flex flex-wrap gap-2">
@@ -241,12 +245,14 @@ export default function Home() {
         <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-yellow-400/10 rounded-full blur-[80px] pointer-events-none"></div>
         
         <div className="max-w-4xl mx-auto relative z-10">
-          <h2 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tighter mb-6 sm:mb-8 font-display uppercase leading-[1] whitespace-pre-wrap">
-            {settings.ctaTitle}
-          </h2>
-          <p className="text-lg sm:text-xl text-zinc-400 mb-10 sm:mb-12 max-w-2xl mx-auto font-medium whitespace-pre-wrap">
-            {settings.ctaDescription}
-          </p>
+          <h2 
+            className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tighter mb-6 sm:mb-8 font-display uppercase leading-[1] whitespace-pre-wrap [&_p]:mb-0"
+            dangerouslySetInnerHTML={{ __html: settings.ctaTitle }}
+          />
+          <div 
+            className="text-lg sm:text-xl text-zinc-400 mb-10 sm:mb-12 max-w-2xl mx-auto font-medium whitespace-pre-wrap [&_p]:mb-0"
+            dangerouslySetInnerHTML={{ __html: settings.ctaDescription }}
+          />
           <a 
             href={`https://wa.me/${settings.whatsappNumber}`} 
             target="_blank" rel="noopener noreferrer"
@@ -270,9 +276,10 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-zinc-100 text-center text-xs sm:text-sm font-medium text-zinc-400 whitespace-pre-wrap">
-          {settings.footerText}
-        </div>
+        <div 
+          className="max-w-7xl mx-auto mt-8 pt-6 border-t border-zinc-100 text-center text-xs sm:text-sm font-medium text-zinc-400 whitespace-pre-wrap [&_p]:mb-0"
+          dangerouslySetInnerHTML={{ __html: settings.footerText }}
+        />
       </footer>
     </div>
   );
